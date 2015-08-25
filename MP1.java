@@ -60,7 +60,7 @@ public class MP1 {
 
             while (line != null) {
                 line = br.readLine();
-                StringTokenizer tokens = new StringTokenizer(line, "_");
+                StringTokenizer tokens = new StringTokenizer(line, this.delimiters);
 //                System.out.println("line : " + line);
                 while (tokens.hasMoreTokens()) {
                     System.out.println(tokens.nextToken());
@@ -79,7 +79,7 @@ public class MP1 {
         }
         else {
             String userName = args[0];
-            String inputFileName = "src/mp1/input.txt";
+            String inputFileName = "./input.txt";
             MP1 mp = new MP1(userName, inputFileName);
             String[] topItems = mp.process();
             for (String item: topItems){

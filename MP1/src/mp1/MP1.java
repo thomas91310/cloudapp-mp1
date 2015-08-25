@@ -72,7 +72,7 @@ public class MP1 {
 
             while (line != null) {
                 line = br.readLine();
-                StringTokenizer tokens = new StringTokenizer(line, "_");
+                StringTokenizer tokens = new StringTokenizer(line, this.delimiters);
 //                System.out.println("line : " + line);
                 while (tokens.hasMoreTokens()) {
                     System.out.println(tokens.nextToken());
