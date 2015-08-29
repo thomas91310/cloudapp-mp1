@@ -69,13 +69,17 @@ public class MP1 {
         HashMap<String, Integer> freq = new HashMap<String, Integer>();
         
         BufferedReader br = new BufferedReader(new FileReader(this.inputFileName));
-        Integer[] index = this.getIndexes();
-        
+        Integer[] indexes = this.getIndexes();
+        Integer countLines = 0;
         
         try {
             String line;
             while ((line = br.readLine()) != null) {
-                line = br.readLine();
+                if (!(Arrays.asList(indexes).contains(countLines))) {
+                    countLines += 1;
+                    continue;
+                }
+                countLines += 1;
                 StringTokenizer st = new StringTokenizer(line, this.delimiters);
                 while (st.hasMoreTokens()) {
                     String word = st.nextToken().toLowerCase();
@@ -106,9 +110,6 @@ public class MP1 {
             ret[i] = entry.getKey();
             i += 1;
         }
-//        WordCount count = freq.get("girl");
-//        System.out.println(count.get());
-        
         return ret;
     }
     
