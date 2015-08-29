@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class MP1 {
     Random generator;
@@ -51,23 +52,78 @@ public class MP1 {
         this.inputFileName = inputFileName;
     }
 
+    public static HashMap<String, Integer> sortByComparator(HashMap<String, Integer> unsortMap, final boolean order)
+    {
+        List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unsortMap.entrySet());
+
+        // Sorting the list based on values
+        Collections.sort(list, new Comparator<Entry<String, Integer>>()
+        {
+            public int compare(Entry<String, Integer> o1,
+                    Entry<String, Integer> o2)
+            {
+                if (order)
+                {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+                else
+                {
+                    return o2.getValue().compareTo(o1.getValue());
+
+                }
+            }
+        });
+
+        // Maintaining insertion order with the help of LinkedList
+        HashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        for (Entry<String, Integer> entry : list)
+        {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
     public String[] process() throws Exception {
         String[] ret = new String[20];
+        HashMap<String, Integer> freq = new HashMap<String, Integer>();
         
         BufferedReader br = new BufferedReader(new FileReader(this.inputFileName));
-        try {
-            String line = br.readLine();
+        Integer[] index = this.getIndexes();
 
-            while (line != null) {
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
                 line = br.readLine();
-                StringTokenizer tokens = new StringTokenizer(line, this.delimiters);
-//                System.out.println("line : " + line);
-                while (tokens.hasMoreTokens()) {
-                    System.out.println(tokens.nextToken());
+                StringTokenizer st = new StringTokenizer(line, this.delimiters);
+                while (st.hasMoreTokens()) {
+                    String word = st.nextToken().toLowerCase();
+                    if (Arrays.asList(this.stopWordsArray).contains(word)) {
+                        continue;
+                    }
+                    Integer count = freq.get(word);
+                    if (count == null) {
+                        freq.put(word, 1);
+                    }
+                    else {
+                        freq.put(word, count + 1);
+                    }
                 }
             }
         } finally {
             br.close();
+        }
+        
+        HashMap<String, Integer> sortedMap = sortByComparator(freq, false);
+        Integer stop = 20;
+        Integer i = 0;
+        for (Entry<String, Integer> entry : sortedMap.entrySet())
+        {
+            if (i >= 20) {
+                break;
+            }
+            ret[i] = entry.getKey();
+            i += 1;
         }
         
         return ret;
