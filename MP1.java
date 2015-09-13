@@ -52,43 +52,43 @@ public class MP1 {
         this.inputFileName = inputFileName;
     }
 
-    public String[] process() throws Exception {
+        public String[] process() throws Exception {
         String[] ret = new String[20];
         HashMap<String, Integer> freq = new HashMap<String, Integer>();
         
         BufferedReader br = new BufferedReader(new FileReader(this.inputFileName));
         Integer[] indexes = this.getIndexes();
-        Integer countLines = 0;
+        ArrayList<String> lines = new ArrayList<String>();
         
         try {
             String line;
             while ((line = br.readLine()) != null) {
-                if (!(Arrays.asList(indexes).contains(countLines))) {
-                    countLines += 1;
-                    continue;
-                }
-                countLines += 1;
-                StringTokenizer st = new StringTokenizer(line, this.delimiters);
-                while (st.hasMoreTokens()) {
-                    String word = st.nextToken().toLowerCase();
-                    if (Arrays.asList(this.stopWordsArray).contains(word)) {
-                        continue;
-                    }
-                    Integer count = freq.get(word);
-                    if (count == null) {
-                        freq.put(word, 1);
-                    }
-                    else {
-                        freq.put(word, count + 1);
-                    }
-                }
+                lines.add(line);
             }
         } finally {
             br.close();
         }
         
-        HashMap<String, Integer> sortedMap = sortByComparator(freq, false);
-        Integer stop = 20;
+        for (int k = 0; k < indexes.length; k++) {
+            StringTokenizer st = new StringTokenizer(lines.get(indexes[k]), this.delimiters);
+            while (st.hasMoreTokens()) {
+                String word = st.nextToken().toLowerCase();
+                if (Arrays.asList(this.stopWordsArray).contains(word)) {
+                    continue;
+                }
+                Integer count = freq.get(word);
+                if (count == null) {
+                    freq.put(word, 1);
+                }
+                else {
+                    freq.put(word, count + 1);
+                }
+            }
+        }
+                 
+        Map<String, Integer> treeMap = new TreeMap<String, Integer>(freq);
+        Map<String, Integer> sortedMap = sortByComparator(treeMap, false);
+        
         Integer i = 0;
         for (Entry<String, Integer> entry : sortedMap.entrySet())
         {
@@ -98,15 +98,15 @@ public class MP1 {
             ret[i] = entry.getKey();
             i += 1;
         }
-        
         return ret;
     }
     
-    public static HashMap<String, Integer> sortByComparator(HashMap<String, Integer> unsortMap, final boolean order)
+    public static Map<String, Integer> sortByComparator(Map<String, Integer> unsortMap, final boolean order)
     {
         List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(unsortMap.entrySet());
 
         // Sorting the list based on values
+        
         Collections.sort(list, new Comparator<Entry<String, Integer>>()
         {
             public int compare(Entry<String, Integer> o1,
@@ -124,7 +124,7 @@ public class MP1 {
         });
 
         // Maintaining insertion order with the help of LinkedList
-        HashMap<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
+        Map<String, Integer> sortedMap = new LinkedHashMap<String, Integer>();
         for (Entry<String, Integer> entry : list)
         {
             sortedMap.put(entry.getKey(), entry.getValue());
